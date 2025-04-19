@@ -3,6 +3,14 @@ from django.conf import settings
 
 
 class Category(models.Model):
+    """
+    Represent the categories in servers.
+    note that this model is above Server and Channel models.
+
+    Attributes:
+        name (str): The name of the category.
+        description (str, optional): A brief description of the category.
+    """
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
 
@@ -11,6 +19,18 @@ class Category(models.Model):
 
 
 class Server(models.Model):
+    """
+    Represents a server.
+
+    Attributes:
+        name (str): The name of the server.
+        owner (ForeignKey): A reference to the user who owns the server. 
+            This is a foreign key to the user model defined in settings.AUTH_USER_MODEL.
+        category (ForeignKey): A reference to the category of the server.
+        description (str, optional): A brief description of the server.
+        member (ManyToManyField): A many-to-many relationship to the user model 
+            defined in settings.AUTH_USER_MODEL, representing the members of the server.
+    """
     name = models.CharField(max_length=100)
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="Server_owner")
@@ -22,6 +42,19 @@ class Server(models.Model):
 
 
 class Channel(models.Model):
+    """
+    Represents a channel in a server.
+
+    Attributes:
+        name (CharField): The name of the channel.
+        owner (ForeignKey): A reference to the user who owns the server. 
+            This is a foreign key to the user model defined in settings.AUTH_USER_MODEL.
+        topic (CharField): The topic or theme of the channel.
+        server (ForeignKey): A reference to the server in which the channel is created in.
+
+    Methods:
+        save(): Overrides the default save method to convert the name to lowercase.
+    """
     name = models.CharField(max_length=100)
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="Channel_owner")
